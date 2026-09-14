@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MRI Simulator: Canine Brain</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Stage 1: Signal Intensities -->
+    <div class="stage1-container">
+        <h3>Stage 1: Signal Intensities @ 1.5T</h3>
+        <div class="main-container">
+            <div class="controls-panel">
+                <h3>Top Viewer Parameters</h3>
+                <div class="slider-group">
+                    <label>TR: <span id="topTrVal">2000</span>ms</label>
+                    <input type="range" id="topTrSlider" min="400" max="10000" step="100" value="2000">
+                </div>
+                <div class="slider-group">
+                    <label>TE: <span id="topTeVal">80</span>ms</label>
+                    <input type="range" id="topTeSlider" min="5" max="200" step="5" value="80">
+                </div>
+                <div class="slider-group">
+                    <label>
+                        <input type="checkbox" id="topTseToggle" checked> Turbo Spin Echo (TSE)
+                    </label>
+                </div>
+                <div class="slider-group">
+                    <label>
+                        <input type="checkbox" id="topIrToggle"> Inversion Recovery (IR) Mode
+                    </label>
+                </div>
+                <div class="slider-group" id="topTiGroup">
+                    <label>TI: <span id="topTiVal">150</span>ms</label>
+                    <input type="range" id="topTiSlider" min="5" max="3000" step="25" value="150" disabled>
+                </div>
+                <div class="slider-group" id="topFatSatGroup">
+                    <label>
+                        <input type="checkbox" id="topFatSatToggle"> Fat Saturation (CHESS)
+                    </label>
+                </div>
+            </div>
+            <div class="visual-panel">
+                <div id="image-stack" style="position: relative; width: 500px; height: 500px;">
+                    <img src="fat.png" class="layer" id="layer-fat" draggable="false">
+                    <img src="muscle.png" class="layer" id="layer-muscle" draggable="false">
+                    <img src="bone.png" class="layer" id="layer-bone" draggable="false">
+                    <img src="whiteMatter.png" class="layer" id="layer-whiteMatter" draggable="false">
+                    <img src="greyMatter.png" class="layer" id="layer-greyMatter" draggable="false">
+                    <img src="csf.png" class="layer" id="layer-csf" draggable="false">
+                </div>
+                <div class="legend-hint">Hover over legend items to highlight anatomy</div>
+                <div id="legend">
+                    <div class="legend-item" data-tissue="fat"><span class="box fat-box"></span> Fat</div>
+                    <div class="legend-item" data-tissue="muscle"><span class="box muscle-box"></span> Muscle</div>
+                    <div class="legend-item" data-tissue="bone"><span class="box bone-box"></span> Bone</div>
+                    <div class="legend-item" data-tissue="csf"><span class="box csf-box"></span> CSF</div>
+                    <div class="legend-item" data-tissue="greyMatter"><span class="box greyMatter-box"></span> Grey Matter</div>
+                    <div class="legend-item" data-tissue="whiteMatter"><span class="box whiteMatter-box"></span> White Matter</div>
+                </div>
+            </div>
+        </div>
+		<div class="pulse-reference-container">
+			<h3>1.5T Standard Sequence Parameters</h3>
+			<table class="pulse-ref-table">
+				<thead>
+					<tr>
+						<th>Contrast</th>
+						<th>TR</th>
+						<th>TE</th>
+						<th>TI</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>T1-Weighted</strong></td>
+						<td>Short (400 - 600 ms)</td>
+						<td>Short (10 - 30 ms)</td>
+						<td>—</td>
+					</tr>
+					<tr>
+						<td><strong>T2-Weighted</strong></td>
+						<td>Long (2000 - 4000 ms)</td>
+						<td>Long (80 - 120 ms)</td>
+						<td>—</td>
+					</tr>
+					<tr>
+						<td><strong>Proton Density (PD)</strong></td>
+						<td>Long (2000 - 4000 ms)</td>
+						<td>Short (10 - 30 ms)</td>
+						<td>—</td>
+					</tr>
+					<tr>
+						<td><strong>T2-W FLAIR</strong></td>
+						<td>Very Long (8000 - 10,000 ms)</td>
+						<td>Long (90 - 120 ms)</td>
+						<td>Long (2000 - 2500 ms)</td>
+					</tr>
+					<tr>
+						<td><strong>STIR</strong></td>
+						<td>Long (3000 - 5000 ms)</td>
+						<td>Medium (30 - 60 ms)</td>
+						<td>Short (130 - 170 ms)</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+    </div>
+
+    <!-- Stage 2: Acquisition & Image Parameters -->
+    <div class="advanced-container">
+        <h3>Stage 2: Acquisition & Image Parameters</h3>
+        <div class="zones-wrapper">
+            <!-- Zone 1: Acquisition Parameters (Two Columns) -->
+            <div class="zone zone-controls">
+                <h4>1. Acquisition Parameters</h4>
+                <div class="zone-columns">
+                    <!-- Column 1: Parameter Inputs -->
+                    <div class="parameters-column">
+                        <div class="slider-group">
+                            <label>TR: <span id="trVal">2000</span>ms</label>
+                            <input type="range" id="trSlider" min="400" max="10000" step="100" value="2000">
+                        </div>
+                        <div class="slider-group">
+                            <label>TE: <span id="teVal">80</span>ms</label>
+                            <input type="range" id="teSlider" min="5" max="200" step="5" value="80">
+                        </div>
+                        <div class="slider-group">
+                            <label>
+                                <input type="checkbox" id="tseToggle" checked> Turbo Spin Echo (TSE)
+                            </label>
+                        </div>
+                        <div class="slider-group" id="etlGroup">
+                            <label>Echo Train Length (ETL): <span id="etlVal">8</span></label>
+                            <input type="range" id="etlSlider" min="1" max="16" step="1" value="4">
+                        </div>
+                        <div class="slider-group">
+                            <label>
+                                <input type="checkbox" id="irToggle"> Inversion Recovery (IR) Mode
+                            </label>
+                        </div>
+                        <div class="slider-group" id="tiGroup">
+                            <label>TI: <span id="tiVal">150</span>ms</label>
+                            <input type="range" id="tiSlider" min="5" max="3000" step="25" value="150" disabled>
+                        </div>
+                        <div class="slider-group">
+                            <label>
+                                <input type="checkbox" id="fatSatToggle"> Fat Saturation (CHESS)
+                            </label>
+                        </div>
+						<div class="slider-group">
+							<label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+								<input type="checkbox" id="phaseWrapToggle" checked> 
+								<span>No Phase Wrap (Oversampling)</span>
+							</label>
+						</div>
+                        <div class="slider-group">
+                            <label>Phase Encode Direction:</label>
+                            <div style="display: flex; gap: 15px; margin-top: 4px;">
+                                <label><input type="checkbox" id="phaseEncodeHoriz" checked> Horizontal (R/L)</label>
+                                <label><input type="checkbox" id="phaseEncodeVert"> Vertical (D/V)</label>
+                            </div>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid #555; width: 100%; margin: 10px 0;">
+                        <div class="slider-group">
+                            <label>Field Strength: <span id="b0Val">1.5</span> T</label>
+                            <input type="range" id="b0Slider" min="0" max="3" step="1" value="2">
+                        </div>
+                        <div class="slider-group">
+                            <label>Rec. Bandwidth: <span id="rbwVal">40</span> kHz</label>
+                            <input type="range" id="rbwSlider" min="10" max="250" step="10" value="40">
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid #555; width: 100%; margin: 10px 0;">
+                        <div class="slider-group">
+                            <label>Slice Thickness: <span id="thickVal">5</span> mm</label>
+                            <input type="range" id="thickSlider" min="1" max="10" step="1" value="5">
+                        </div>
+                        <div class="slider-group">
+                            <label>Matrix Size: <span id="matrixVal">256</span></label>
+                            <input type="range" id="matrixSlider" min="0" max="3" step="1" value="2">
+                        </div>
+                        <div class="slider-group">
+                            <label>NSA (Averages): <span id="nsaVal">1</span></label>
+                            <input type="range" id="nsaSlider" min="1" max="4" step="1" value="1">
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Estimated Calculations & Trade-offs -->
+                    <div class="results-column">
+                        <div class="metrics-panel">
+                            <div class="metric-card">
+                                <div class="metric-label">Estimated SNR</div>
+                                <div class="metric-value"><span id="snrVal">--</span></div>
+                                <div class="metric-formula">SNR ∝ (Voxel Vol × √NSA × B₀) / √RBW</div>
+                            </div>
+							<div class="metric-card">
+								<div class="metric-label">Estimated CNR</div>
+								<div class="metric-value"><span id="cnrVal">--</span></div>
+								<div class="metric-formula">CNR ∝ |Signal₁ - Signal₂| × SNR</div>
+							</div>
+                            <div class="metric-card">
+                                <div class="metric-label">Estimated SAR</div>
+                                <div class="metric-value"><span id="sarVal">--</span> <span class="metric-unit">W/kg</span></div>
+                                <div class="metric-formula">SAR ∝ (B₀ / 1.5)² × (Flip Angle / 90)² x (2000 / TR) × ETL x (1 / Patient Weight Factor)</div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Scan Time</div>
+                                <div class="metric-value"><span id="scanTimeVal">--:--</span></div>
+                                <div class="metric-formula">Table Time = ((PEMatrix x TR x NSA) / (ETL x 1000))</div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">In-Plane Resolution</div>
+                                <div class="metric-value"><span id="resVal">--</span> <span class="metric-unit">mm</span></div>
+                                <div class="metric-formula">Res = FOV / Matrix Size</div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Out-of-Plane Resolution</div>
+                                <div class="metric-value"><span id="outPlaneResVal">--</span> <span class="metric-unit">mm</span></div>
+                                <div class="metric-formula">Thickness = Slice Profile Selection</div>
+                            </div>
+                        </div>
+
+                        <div id="tradeoffPanel" style="margin-top: 12px; padding: 8px; background: rgba(0,0,0,0.3); border-left: 3px solid #4CAF50; font-size: 12px; color: #ddd; line-height: 1.4;">
+                            <strong>Clinical Trade-off:</strong> Parameters optimized for current sequence.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone 2: Localizer & ROI Box -->
+            <div class="zone zone-localizer">
+                <h4>2. Localizer & Slice Selection</h4>
+                <p class="zone-hint">Drag box to move, use corner handle to resize</p>
+                <div id="localizer-container">
+                    <canvas id="localizerCanvas" width="450" height="450"></canvas>
+                    <div id="roiBox">
+                        <div class="resize-handle se"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone 3: Acquired Output Image -->
+            <div class="zone zone-output">
+                <h4>3. Acquired Output</h4>
+                <div id="output-container">
+                    <canvas id="outputCanvas" width="450" height="450"></canvas>
+                </div>
+                <button id="acquireBtn">Run Acquisition</button>
+            </div>
+        </div>
+		<div class="param-info-box">
+			<h4>Acquisition Parameter Further Explained</h4>
+			<div class="param-tabs">
+				<button class="tab-btn active" data-param="tr">TR</button>
+				<button class="tab-btn" data-param="te">TE</button>
+				<button class="tab-btn" data-param="tse">TSE / ETL</button>
+				<button class="tab-btn" data-param="ir">IR / TI</button>
+				<button class="tab-btn" data-param="chess">CHESS</button>
+				<button class="tab-btn" data-param="wrap">No Phase Wrap</button>
+				<button class="tab-btn" data-param="phase">Phase Encoding</button>
+				<button class="tab-btn" data-param="b0">Field Strength (B₀)</button>
+				<button class="tab-btn" data-param="rbw">RBW</button>
+				<button class="tab-btn" data-param="thick">Slice Thickness</button>
+				<button class="tab-btn" data-param="matrix">Matrix Size</button>
+				<button class="tab-btn" data-param="nsa">NSA</button>
+			</div>
+			<div class="tab-content-panel" id="tabContentPanel">
+				<!-- Explanations render here dynamically -->
+			</div>
+		</div>
+		<div class="parameter-chart-container">
+			<h4>Parameter Trade-off Matrix</h4>
+			<table class="tradeoff-chart-table">
+				<thead>
+					<tr>
+						<th>Parameter</th>
+						<th>SNR</th>
+						<th>SAR</th>
+						<th>Scan Time</th>
+						<th>In-Plane Res</th>
+						<th>Out-Of-Plane Res</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr><td>TR</td><td>Direct</td><td>Inverse</td><td>Direct</td><td>None</td><td>None</td></tr>
+					<tr><td>TE</td><td>Inverse</td><td>None</td><td>None</td><td>None</td><td>None</td></tr>
+					<tr><td>ETL</td><td>Inverse</td><td>Direct</td><td>Inverse</td><td>None</td><td>None</td></tr>
+					<tr><td>No Phase Wrap</td><td>None</td><td>None</td><td>Direct</td><td>None</td><td>None</td></tr>
+					<tr><td>Field Strength</td><td>Direct</td><td>Direct</td><td>None</td><td>None</td><td>None</td></tr>
+					<tr><td>RBW</td><td>Inverse</td><td>None</td><td>None</td><td>None</td><td>None</td></tr>
+					<tr><td>Slice Thickness</td><td>Direct</td><td>None</td><td>None</td><td>None</td><td>Inverse</td></tr>
+					<tr><td>Matrix Size</td><td>Inverse</td><td>None</td><td>Direct</td><td>Direct</td><td>None</td></tr>
+					<tr><td>NSA</td><td>Direct</td><td>Direct</td><td>Direct</td><td>None</td><td>None</td></tr>
+				</tbody>
+			</table>
+		</div>
+    </div>
+
+    <script>
+        // Enforce mutually exclusive behavior for the checkboxes
+        const horizCheckbox = document.getElementById('phaseEncodeHoriz');
+        const vertCheckbox = document.getElementById('phaseEncodeVert');
+
+        horizCheckbox.addEventListener('change', () => {
+            if (horizCheckbox.checked) vertCheckbox.checked = false;
+            else horizCheckbox.checked = true; // Prevent both from being unchecked
+        });
+
+        vertCheckbox.addEventListener('change', () => {
+            if (vertCheckbox.checked) horizCheckbox.checked = false;
+            else vertCheckbox.checked = true; // Prevent both from being unchecked
+        });
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
