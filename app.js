@@ -71,9 +71,14 @@ const tissues = [
 const loadedImages = {};
 let imagesLoadedCount = 0;
 
+// Robust path resolution for GitHub Pages subdirectories
+const repoBasePath = (window.location.pathname.includes('/') && !window.location.pathname.endsWith('/'))
+    ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)
+    : window.location.pathname;
+
 tissues.forEach(t => {
     const img = new Image();
-    img.src = `${t.name}.png`;
+    img.src = `${repoBasePath}${t.name}.png`;
     img.onload = () => {
         imagesLoadedCount++;
         if (imagesLoadedCount === tissues.length) {
